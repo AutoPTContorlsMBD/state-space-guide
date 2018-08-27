@@ -56,6 +56,80 @@ def drivetrain(motor, num_motors, m, r, rb, J, Gl, Gr):
     return cnt.ss(A, B, C, D)
 
 
+def drivetrain_v(motor, num_motors, m, r, rb, J, Gl, Gr):
+    """Returns the state-space model for a drivetrain with only a velocity
+    state.
+
+    States: [[velocity]]
+    Inputs: [[left voltage], [right voltage]]
+    Outputs: [[velocity]]
+
+    Keyword arguments:
+    motor -- instance of DcBrushedMotor
+    num_motors -- number of motors driving the mechanism
+    m -- mass of robot in kg
+    r -- radius of wheels in meters
+    rb -- radius of robot in meters
+    J -- moment of inertia of the drivetrain in kg-m^2
+    Gl -- gear ratio of left side of drivetrain
+    Gr -- gear ratio of right side of drivetrain
+
+    Returns:
+    StateSpace instance containing continuous model
+    """
+    motor = frccnt.models.gearbox(motor, num_motors)
+
+    C1 = -Gl ** 2 * motor.Kt / (motor.Kv * motor.R * r ** 2)
+    C2 = Gl * motor.Kt / (motor.R * r)
+    C3 = -Gr ** 2 * motor.Kt / (motor.Kv * motor.R * r ** 2)
+    C4 = Gr * motor.Kt / (motor.R * r)
+    # fmt: off
+    A = np.matrix([[1 / m * (C1 + C3)]])
+    B = np.matrix([[1 / m * C2, 1 / m * C4]])
+    C = np.matrix([[1]])
+    D = np.matrix([[0, 0]])
+    # fmt: on
+
+    return cnt.ss(A, B, C, D)
+
+
+def drivetrain_omega(motor, num_motors, m, r, rb, J, Gl, Gr):
+    """Returns the state-space model for a drivetrain with only an angular
+    velocity state.
+
+    States: [[velocity], [angular velocity]]
+    Inputs: [[left voltage], [right voltage]]
+    Outputs: [[left velocity], [right velocity]]
+
+    Keyword arguments:
+    motor -- instance of DcBrushedMotor
+    num_motors -- number of motors driving the mechanism
+    m -- mass of robot in kg
+    r -- radius of wheels in meters
+    rb -- radius of robot in meters
+    J -- moment of inertia of the drivetrain in kg-m^2
+    Gl -- gear ratio of left side of drivetrain
+    Gr -- gear ratio of right side of drivetrain
+
+    Returns:
+    StateSpace instance containing continuous model
+    """
+    motor = frccnt.models.gearbox(motor, num_motors)
+
+    C1 = -Gl ** 2 * motor.Kt / (motor.Kv * motor.R * r ** 2)
+    C2 = Gl * motor.Kt / (motor.R * r)
+    C3 = -Gr ** 2 * motor.Kt / (motor.Kv * motor.R * r ** 2)
+    C4 = Gr * motor.Kt / (motor.R * r)
+    # fmt: off
+    A = np.matrix([[rb ** 2 / J * (-C1 - C3)]])
+    B = np.matrix([[-rb / J * C4]])
+    C = np.matrix([[1]])
+    D = np.matrix([[0]])
+    # fmt: on
+
+    return cnt.ss(A, B, C, D)
+
+
 class Pose:
     def __init__(self, x=0, y=0, theta=0):
         self.x = x
