@@ -30,7 +30,7 @@ printer: $(NAME)-printer.pdf
 prepress: $(NAME)-prepress.pdf
 
 $(NAME).pdf: $(TEX) $(STAMP) $(BIB) $(FIGS) build/commit-hash.txt
-	latexmk -interaction=nonstopmode -xelatex $(NAME)
+	latexmk -recorder- -latex=htxelatex $(NAME)
 
 $(NAME)-ebook.pdf: $(NAME).pdf
 	gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=$(NAME)-ebook.pdf $(NAME).pdf

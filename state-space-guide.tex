@@ -1,4 +1,5 @@
 \documentclass[11pt]{book}
+\def\pgfsysdriver{pgfsys-tex4ht-alt.def}
 
 \usepackage{amsmath,amssymb,amsthm}
 \DeclareMathOperator{\eig}{eig}
@@ -27,6 +28,9 @@
 \usepackage{makeidx}
 \usepackage{parskip}
 \usepackage{placeins} % For FloatBarrier command
+\ifdefined\HCode
+\usepackage[compatibility=false]{caption}
+\fi
 \usepackage{subcaption}
 \usepackage{tabulary}
 \usepackage{tikz}
